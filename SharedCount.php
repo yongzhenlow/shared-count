@@ -64,17 +64,38 @@ class SharedCount
   }
 
   /**
+   * Get the shared count array of the URL for all available social_network
+   * Available values are 'pinterest', 'twitter', 'facebook_share', 'facebook_like', 'linkedin', 'googleplus'
+   * @param  array  $social_networks An array of social network names.
+   * @return array  Associative array containing the shared counts of the URL
+   */
+  public function get_count_array($social_networks = array())
+  {
+    $count_arr = array();
+    if(empty($social_networks)){
+      $social_networks = $this->social_networks;
+    }
+    foreach ($social_networks as $social_network) {
+      $method = 'get_' . $social_network;
+      if(method_exists($this, $method)){
+        $count_arr[$social_network] = $this->$method();
+      }
+    }
+    return $count_arr;
+  }
+
+  /**
    * Get the total shared counts of the URL for a given array of social networks
    * Available values are 'pinterest', 'twitter', 'facebook_share', 'facebook_like', 'linkedin', 'googleplus'
    * If you want to get ALL available social networks, use get_count('all') instead.
-   * @param  array  $arr An array of social network names.
+   * @param  array  $social_networks An array of social network names.
    * @return int      The total shared count of the URL for the given social networks
    */
-  public function get_sum_of($arr = array())
+  public function get_sum_of($social_networks = array())
   {
     $sum = 0;
-    if(!empty($arr)){
-      foreach ($arr as $social_network) {
+    if(!empty($social_networks)){
+      foreach ($social_networks as $social_network) {
         if($social_network !== 'all'){
           $sum += $this->get_count($social_network);
         }
