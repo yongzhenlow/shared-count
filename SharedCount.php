@@ -54,8 +54,7 @@ class SharedCount
     $count = 0;
     $method = 'get_' . $social_network;
     if(method_exists($this, $method)){
-      $args = func_get_args();
-      $count = isset($args[1]) ? $this->$method($args[1]) : $this->$method();
+      $count = $this->$method();
     }
     return $count;
   }
