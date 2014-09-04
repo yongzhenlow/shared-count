@@ -23,6 +23,7 @@ class SharedCount
     'googleplus'  => 'https://clients6.google.com/rpc'
   );
   private $social_networks = array('pinterest', 'twitter', 'facebook_share', 'facebook_like', 'linkedin', 'googleplus');
+  private $cache = array();
 
   /**
    * Creates an instance
@@ -41,6 +42,9 @@ class SharedCount
   {
     $this->url = $url;
     $this->update_api();
+
+    //clear caches
+    $this->cache = array();
   }
 
   /**
@@ -148,7 +152,12 @@ class SharedCount
    */
   private function get_facebook($count_type)
   {
-    $response = $this->http_get($this->api['facebook']);
+    if(empty($this->cache) || !isset($this->cache['facebook'])){
+      $response = $this->http_get($this->api['facebook']);
+      $this->cache['facebook'] = $response;
+    }else{
+      $response = $this->cache['facebook'];
+    }
     return $response['data'][0][$count_type];
   }
 
